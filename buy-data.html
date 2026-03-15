@@ -1,0 +1,86 @@
+<button class="menu-btn" onclick="openMenu()">☰</button>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Buy Data</title>
+
+<link rel="stylesheet" href="css/buy-data.css">
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>📶 Buy Data</h2>
+<p class="subtitle">Purchase and manage your data bundles</p>
+
+<!-- NETWORK SELECTION -->
+
+<div class="network-grid">
+
+<div class="network active" onclick="selectNetwork(this)">
+<img src="images/mtn.png">
+<p>MTN</p>
+</div>
+
+<div class="network" onclick="selectNetwork(this)">
+<img src="images/telecel.png">
+<p>Telecel</p>
+</div>
+
+<div class="network" onclick="selectNetwork(this)">
+<img src="images/airteltigo.png">
+<p>Ishare</p>
+</div>
+
+<div class="network" onclick="selectNetwork(this)">
+<img src="images/bigtime.png">
+<p>Bigtime</p>
+</div>
+
+</div>
+
+<!-- PHONE -->
+
+<label>Phone Number</label>
+<input type="text" id="phone" placeholder="0240000000">
+
+<!-- BUNDLE -->
+
+<label>Bundle Size (GB)</label>
+
+<select id="bundle">
+<option value="">Select size</option>
+<option value="1">1GB</option>
+<option value="2">2GB</option>
+<option value="5">5GB</option>
+<option value="10">10GB</option>
+</select>
+
+<!-- BUTTON -->
+
+<button class="add-cart" onclick="addToCart()">Add to Cart</button>
+
+<!-- CART -->
+
+<div class="cart">
+
+<h3>🛒 Cart Items</h3>
+
+<div id="cartItems">
+<p>Your cart is empty</p>
+</div>
+
+</div>
+
+<button class="pay-btn">Make Payment</button>
+
+</div>
+
+<script src="js/buy-data.js"></script>
+
+</body>
+</html>

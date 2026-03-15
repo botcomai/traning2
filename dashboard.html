@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>User Dashboard</title>
+
+<link rel="stylesheet" href="css/dashboard.css">
+<link rel="stylesheet" href="css/menu.css">
+
+<!-- Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+<script>
+
+const SUPABASE_URL = "https://pklymgwuztcmyhbvtkzj.supabase.co"
+
+const SUPABASE_ANON_KEY = "sb_publishable_wSPqFfoQ42zw4gwcQtNSjg_zmNQYP-Z"
+
+const supabase = window.supabase.createClient(
+SUPABASE_URL,
+SUPABASE_ANON_KEY
+)
+
+</script>
+
+</head>
+
+<body>
+
+<!-- MENU BUTTON -->
+
+<!-- SIDEBAR MENU -->
+
+<div id="sidebar" class="sidebar">
+
+<div class="profile">
+<div class="avatar">👤</div>
+<h3 id="sidebarName">User</h3>
+<p>Account</p>
+</div>
+
+<ul class="menu">
+
+<li class="active">
+<a href="dashboard.html">🏠 Dashboard</a>
+</li>
+
+<li>
+<a href="buy-data.html">📶 Buy Data</a>
+</li>
+
+<li>
+<a href="afa.html">👤 AFA Registration</a>
+</li>
+
+<li>
+<a href="waec.html">🎓 WAEC Results Checker</a>
+</li>
+
+<li>
+<a href="wallet.html">💳 Fund Wallet</a>
+</li>
+
+<li>
+<a href="transactions.html">🕒 Transactions</a>
+</li>
+
+<li>
+<a href="orders.html">📦 Order History</a>
+</li>
+
+</ul>
+
+</div>
+
+<!-- OVERLAY -->
+
+<div id="overlay" onclick="closeMenu()"></div>
+
+<div class="container">
+
+<h1 id="welcomeMessage">Welcome back!</h1>
+<p class="subtitle">Manage your telecom services and transactions</p>
+
+<!-- USER CARD -->
+<div class="user-card">
+  <div>
+      <h2 id="userCardName">User</h2>
+      <p>CLIENT</p>
+  </div>
+</div>
+
+<!-- QUICK SECTION -->
+<div class="grid">
+  
+  <div class="card client-card">
+    <div class="card-avatar">👤</div>
+    <div>
+      <p>CLIENT CODE</p>
+      <h3>D4G-12383</h3>
+    </div>
+  </div>
+  
+  <div class="card">
+    <h4>Quick Links</h4>
+    <button onclick="openMenu()">Services</button>
+    <button onclick="window.location.href='wallet.html'">Wallet Top Up</button>
+    <button>Subscription</button>
+  </div>
+  
+</div>
+
+<!-- STATS -->
+
+<div class="stats">
+
+<div class="stat">
+<div class="stat-icon" style="background: rgba(42, 125, 225, 0.1); color: #2a7de1;">💳</div>
+<p>Wallet Balance</p>
+<h2 id="walletBalance">₵0</h2>
+</div>
+
+<div class="stat">
+<div class="stat-icon" style="background: rgba(243, 156, 18, 0.1); color: #f39c12;">📦</div>
+<p>Orders Today</p>
+<h2>6</h2>
+</div>
+
+<div class="stat">
+<div class="stat-icon" style="background: rgba(46, 204, 113, 0.1); color: #2ecc71;">📈</div>
+<p>Amount Today</p>
+<h2>₵57.50</h2>
+</div>
+
+<div class="stat">
+<div class="stat-icon" style="background: rgba(155, 89, 182, 0.1); color: #9b59b6;">📶</div>
+<p>Bundle Today</p>
+<h2>12GB</h2>
+</div>
+
+</div>
+
+<!-- TRANSACTIONS -->
+
+<div class="transactions">
+
+<div class="header">
+<h2>Recent Transactions</h2>
+<button onclick="window.location.href='transactions.html'">View All</button>
+</div>
+
+<div class="transaction">
+<div>
+<strong>Data Purchase</strong>
+<p>MTN · 13/03/2026</p>
+</div>
+
+<div class="right">
+<span>-₵5.00</span>
+<label class="success">Completed</label>
+</div>
+</div>
+
+<div class="transaction">
+<div>
+<strong>Data Purchase</strong>
+<p>MTN · 13/03/2026</p>
+</div>
+
+<div class="right">
+<span>-₵5.00</span>
+<label class="pending">Undelivered</label>
+</div>
+</div>
+
+</div>
+
+</div>
+
+<script src="js/menu.js"></script>
+
+<script>
+
+// Load user data and wallet balance from Supabase
+
+async function loadUserData(){
+
+const { data: { user }, error } = await supabase.auth.getUser()
+
+if(error || !user){
+
+window.location.href="login.html"
+return
+
+}
+
+// Populate user information from metadata
+const metadata = user.user_metadata || {};
+const firstName = metadata.first_name || "User";
+const lastName = metadata.last_name || "";
+const fullName = (firstName + " " + lastName).trim() || "User";
+
+const sidebarNameElem = document.getElementById("sidebarName");
+const welcomeMsgElem = document.getElementById("welcomeMessage");
+const userCardNameElem = document.getElementById("userCardName");
+
+if(sidebarNameElem) sidebarNameElem.innerText = firstName;
+if(welcomeMsgElem) welcomeMsgElem.innerText = "Welcome back, " + fullName + "!";
+if(userCardNameElem) userCardNameElem.innerText = fullName;
+
+let { data } = await supabase
+.from("users")
+.select("wallet_balance")
+.eq("id", user.id)
+.single()
+
+if(data){
+
+document.getElementById("walletBalance").innerText =
+"₵ " + data.wallet_balance
+
+}
+
+}
+
+loadUserData()
+
+</script>
+
+</body>
+
+</html>

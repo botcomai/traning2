@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>AFA PORTAL</title>
+
+<link rel="stylesheet" href="css/menu.css">
+<link rel="stylesheet" href="css/afa.css">
+
+<!-- Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+<script>
+
+const SUPABASE_URL = "https://pklymgwuztcmyhbvtkzj.supabase.co"
+
+const SUPABASE_ANON_KEY = "sb_publishable_wSPqFfoQ42zw4gwcQtNSjg_zmNQYP-Z"
+
+const supabase = window.supabase.createClient(
+SUPABASE_URL,
+SUPABASE_ANON_KEY
+)
+
+</script>
+
+</head>
+
+<body>
+
+<button class="menu-btn" onclick="openMenu()">☰</button>
+
+<div id="menu-container"></div>
+
+<div class="container">
+
+<div class="afa-logo-container">
+<img src="images/afalogo.png.jpeg" alt="AFA Logo" class="afa-logo">
+</div>
+
+<h2>AFA PORTAL</h2>
+<p class="subtitle">Manage your AFA services</p>
+
+<div class="afa-options">
+
+<button class="premium" onclick="openPremium()">Premium (₵30)</button>
+<button class="normal" onclick="openNormal()">Normal (₵25)</button>
+
+</div>
+
+<!-- PREMIUM MODAL -->
+
+<div id="premiumModal" class="modal">
+
+<div class="modal-content">
+
+<span class="close" onclick="closePremium()">&times;</span>
+
+<h2>AFA Registration</h2>
+
+<form id="afaForm">
+
+<label>Full Name *</label>
+<input type="text" id="pName" required>
+
+<label>Phone Number *</label>
+<input type="text" id="pPhone" required>
+
+<label>ID Type *</label>
+<select id="pIdType" required>
+<option value="">Select ID Type</option>
+<option>Ghana Card</option>
+<option>Passport</option>
+<option>Driver License</option>
+<option>Voter ID</option>
+</select>
+
+<label>ID Number *</label>
+<input type="text" id="pIdNumber" required>
+
+<div class="modal-buttons">
+
+<button type="button" class="cancel-btn" onclick="closePremium()">Cancel</button>
+<button type="submit" class="pay-btn">Pay & Register</button>
+
+</div>
+
+</form>
+
+</div>
+
+</div>
+
+<!-- NORMAL MODAL -->
+
+<div id="normalModal" class="modal">
+
+<div class="modal-content">
+
+<span class="close" onclick="closeNormal()">&times;</span>
+
+<h2>AFA Registration</h2>
+
+<form id="normalForm">
+
+<label>Full Name *</label>
+<input type="text" id="nName" required>
+
+<label>Phone Number *</label>
+<input type="text" id="nPhone" required>
+
+<label>ID Type *</label>
+<select id="nIdType" required>
+<option value="">Select ID Type</option>
+<option>Ghana Card</option>
+<option>Passport</option>
+<option>Driver License</option>
+<option>Voter ID</option>
+</select>
+
+<label>ID Number *</label>
+<input type="text" id="nIdNumber" required>
+
+<label>ID Front (Image/PDF) *</label>
+<input type="file" id="nIdFront" accept="image/*,application/pdf" required>
+
+<label>ID Back (Image/PDF) *</label>
+<input type="file" id="nIdBack" accept="image/*,application/pdf" required>
+
+<div class="modal-buttons">
+
+<button type="button" class="cancel-btn" onclick="closeNormal()">Cancel</button>
+<button type="submit" class="pay-btn">Pay & Register</button>
+
+</div>
+
+</form>
+
+</div>
+
+</div>
+
+<div class="option-text">
+
+<p>⬆ Register AFA without pictures upload</p>
+<p>⬆ Register AFA with pictures upload</p>
+
+</div>
+
+</div>
+
+<script src="js/menu.js"></script>
+
+<script>
+
+function openPremium(){
+document.getElementById("premiumModal").style.display="block"
+}
+
+function closePremium(){
+document.getElementById("premiumModal").style.display="none"
+}
+
+function openNormal(){
+document.getElementById("normalModal").style.display="block"
+}
+
+function closeNormal(){
+document.getElementById("normalModal").style.display="none"
+}
+
+
+
+async function getWallet(){
+
+const { data:{ user } } = await supabase.auth.getUser()
+
+let { data } = await supabase
+.from("users")
+.select("wallet_balance")
+.eq("id",user.id)
+.single()
+
+return data.wallet_balance
+
+}
+
+
+
+document.getElementById("afaForm").addEventListener("submit", async function(e){
+
+e.preventDefault()
+
+let price = 30
+
+let walletBalance = await getWallet()
+
+if(walletBalance < price){
+
+alert("Insufficient wallet balance")
+return
+
+}
+
+const { data:{ user } } = await supabase.auth.getUser()
+
+await supabase
+.from("afa_registrations")
+.insert({
+
+user_id:user.id,
+full_name:document.getElementById("pName").value,
+phone:document.getElementById("pPhone").value,
+id_type:document.getElementById("pIdType").value,
+id_number:document.getElementById("pIdNumber").value,
+plan:"premium"
+
+})
+
+
+await supabase
+.from("users")
+.update({ wallet_balance: walletBalance - price })
+.eq("id",user.id)
+
+closePremium();
+
+if(window.showSuccessPopup) {
+  window.showSuccessPopup("AFA Registered!", "Your Premium account has been successfully configured.", () => {
+    window.location.reload();
+  });
+} else {
+  alert("Premium AFA Registered");
+  window.location.reload();
+}
+
+})
+
+
+
+document.getElementById("normalForm").addEventListener("submit", async function(e){
+
+e.preventDefault()
+
+let price = 25
+
+let walletBalance = await getWallet()
+
+if(walletBalance < price){
+
+alert("Insufficient wallet balance")
+return
+
+}
+
+const { data:{ user } } = await supabase.auth.getUser()
+
+let idFront = document.getElementById("nIdFront").files[0]
+let idBack = document.getElementById("nIdBack").files[0]
+
+if(!idFront || !idBack){
+  alert("Please upload both the front and back of your ID card.")
+  return
+}
+
+alert("Uploading ID documents and registering AFA...")
+
+await supabase
+.from("afa_registrations")
+.insert({
+
+user_id:user.id,
+full_name:document.getElementById("nName").value,
+phone:document.getElementById("nPhone").value,
+id_type:document.getElementById("nIdType").value,
+id_number:document.getElementById("nIdNumber").value,
+plan:"normal",
+status: "pending_verification"
+
+})
+
+
+await supabase
+.from("users")
+.update({ wallet_balance: walletBalance - price })
+.eq("id",user.id)
+
+closeNormal();
+
+if(window.showSuccessPopup) {
+  window.showSuccessPopup("Request Submitted!", "Your Normal AFA account registration is pending verification.", () => {
+    window.location.reload();
+  });
+} else {
+  alert("Normal AFA Registered");
+  window.location.reload();
+}
+
+})
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Order History</title>
+
+<link rel="stylesheet" href="css/menu.css">
+<link rel="stylesheet" href="css/orders.css">
+
+<!-- Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+<script>
+
+const SUPABASE_URL = "https://pklymgwuztcmyhbvtkzj.supabase.co"
+
+const SUPABASE_ANON_KEY = "sb_publishable_wSPqFfoQ42zw4gwcQtNSjg_zmNQYP-Z"
+
+const supabase = window.supabase.createClient(
+SUPABASE_URL,
+SUPABASE_ANON_KEY
+)
+
+</script>
+
+</head>
+
+<body>
+
+<button class="menu-btn" onclick="openMenu()">☰</button>
+
+<div id="menu-container"></div>
+
+<div class="container">
+
+<h2>📦 Order History</h2>
+<p class="subtitle">Manage your data bundle orders</p>
+
+<!-- SEARCH -->
+
+<div class="search-box">
+
+<input type="text" id="searchOrder"
+placeholder="Search by Order ID or Product">
+
+<select id="statusFilter">
+<option value="">All Status</option>
+<option value="Completed">Completed</option>
+<option value="Refunded">Refunded</option>
+<option value="Pending">Pending</option>
+<option value="Processing">Processing</option>
+<option value="Undelivered">Undelivered</option>
+<option value="In transit">In transit</option>
+</select>
+
+<input type="date" id="dateFilter">
+
+<input type="text" id="phoneFilter"
+placeholder="Enter phone number">
+
+</div>
+
+<!-- TABLE -->
+
+<div class="table-box">
+
+<table>
+
+<thead>
+
+<tr>
+<th>ORDER ID</th>
+<th>STATUS</th>
+<th>MSISDN</th>
+<th>VOLUME</th>
+<th>PRICE</th>
+<th>PRODUCT</th>
+<th>SMS</th>
+<th>DATE</th>
+<th>ACTION</th>
+</tr>
+
+</thead>
+
+<tbody id="ordersTable">
+
+<tr class="empty">
+<td colspan="9">No orders found</td>
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+<script src="js/menu.js"></script>
+<script src="js/orders.js"></script>
+
+</body>
+</html>
